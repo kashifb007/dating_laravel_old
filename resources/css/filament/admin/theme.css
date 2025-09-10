@@ -1,0 +1,6 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../app/Livewire/Pages/Admin/**/*.php';
+@source '../../../../resources/views/livewire/pages/admin/**/*.blade.php';
