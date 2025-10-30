@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Country;
 use App\Models\Language;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class LanguageSeeder extends Seeder
 {
@@ -66,7 +67,7 @@ class LanguageSeeder extends Seeder
         ];
 
         //limited number of languages for testing purposes
-        if (config('app.env') === 'testing') {
+        if (App::runningUnitTests()) {
             $languages = array_filter($languages, function ($language) {
                 return in_array($language['locale'], ['en', 'fr-fr']);
             });

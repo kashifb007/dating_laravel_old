@@ -1311,23 +1311,28 @@ class ChoiceSeeder extends Seeder
             ],
             [
                 'profile_question_id' => ProfileQuestion::whereSlug('religion')->first()->id,
-                'name' => ['en' => "Shinto", 'en-us' => "Shinto", 'fr-fr' => "Shinto", 'de-de' => "Shinto", 'es-es' => "Shinto", 'it-it' => "Shinto", 'nl-nl' => "Shinto", 'sv-se' => "Shinto", 'pt-pt' => "Shinto"],
+                'name' => ['en' => "Scientology", 'en-us' => "Scientology", 'fr-fr' => "Scientology", 'de-de' => "Scientology", 'es-es' => "Scientology", 'it-it' => "Scientology", 'nl-nl' => "Scientology", 'sv-se' => "Scientology", 'pt-pt' => "Scientology"],
                 'sort_order' => 10,
             ],
             [
                 'profile_question_id' => ProfileQuestion::whereSlug('religion')->first()->id,
-                'name' => ['en' => "Sikh", 'en-us' => "Sikh", 'fr-fr' => "Sikh", 'de-de' => "Sikh", 'es-es' => "Sij", 'it-it' => "Sikh", 'nl-nl' => "Sikh", 'sv-se' => "Sikh", 'pt-pt' => "Sikh"],
+                'name' => ['en' => "Shinto", 'en-us' => "Shinto", 'fr-fr' => "Shinto", 'de-de' => "Shinto", 'es-es' => "Shinto", 'it-it' => "Shinto", 'nl-nl' => "Shinto", 'sv-se' => "Shinto", 'pt-pt' => "Shinto"],
                 'sort_order' => 11,
             ],
             [
                 'profile_question_id' => ProfileQuestion::whereSlug('religion')->first()->id,
-                'name' => ['en' => "Spiritual but not religious", 'en-us' => "Spiritual but not religious", 'fr-fr' => "Spirituel mais pas religieux", 'de-de' => "Spirituell aber nicht religiös", 'es-es' => "Espiritual pero no religioso", 'it-it' => "Spirituale ma non religioso", 'nl-nl' => "Spiritueel maar niet religieus", 'sv-se' => "Spirituell", 'pt-pt' => "Espiritual mas não religioso"],
+                'name' => ['en' => "Sikh", 'en-us' => "Sikh", 'fr-fr' => "Sikh", 'de-de' => "Sikh", 'es-es' => "Sij", 'it-it' => "Sikh", 'nl-nl' => "Sikh", 'sv-se' => "Sikh", 'pt-pt' => "Sikh"],
                 'sort_order' => 12,
             ],
             [
                 'profile_question_id' => ProfileQuestion::whereSlug('religion')->first()->id,
-                'name' => ['en' => "Other", 'en-us' => "Other", 'fr-fr' => "Autre", 'de-de' => "Andere", 'es-es' => "Otro", 'it-it' => "Altro", 'nl-nl' => "Ander", 'sv-se' => "Annan", 'pt-pt' => "Outro"],
+                'name' => ['en' => "Spiritual but not religious", 'en-us' => "Spiritual but not religious", 'fr-fr' => "Spirituel mais pas religieux", 'de-de' => "Spirituell aber nicht religiös", 'es-es' => "Espiritual pero no religioso", 'it-it' => "Spirituale ma non religioso", 'nl-nl' => "Spiritueel maar niet religieus", 'sv-se' => "Spirituell", 'pt-pt' => "Espiritual mas não religioso"],
                 'sort_order' => 13,
+            ],
+            [
+                'profile_question_id' => ProfileQuestion::whereSlug('religion')->first()->id,
+                'name' => ['en' => "Other", 'en-us' => "Other", 'fr-fr' => "Autre", 'de-de' => "Andere", 'es-es' => "Otro", 'it-it' => "Altro", 'nl-nl' => "Ander", 'sv-se' => "Annan", 'pt-pt' => "Outro"],
+                'sort_order' => 14,
             ],
             [
                 'profile_question_id' => ProfileQuestion::whereSlug('languages')->first()->id,

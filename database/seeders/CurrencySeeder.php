@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Country;
 use App\Models\Currency;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class CurrencySeeder extends Seeder
 {
@@ -123,7 +124,7 @@ class CurrencySeeder extends Seeder
         ];
 
         //limited number of currencies for testing purposes
-        if (config('app.env') === 'testing') {
+        if (App::runningUnitTests()) {
             $currencies = array_filter($currencies, function ($currency) {
                 return in_array($currency['code'], ['GBP', 'USD', 'EUR']);
             });

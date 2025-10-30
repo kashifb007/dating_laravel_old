@@ -40,6 +40,7 @@ class ProfileFactory extends Factory
             'is_verified' => (bool)random_int(0, 1),
             'is_subscribed' => (bool)random_int(0, 1),
             'is_dummy' => true,
+            'is_profile_complete' => true,
         ];
     }
 }

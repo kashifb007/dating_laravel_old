@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Country;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class CountrySeeder extends Seeder
 {
@@ -268,7 +269,7 @@ class CountrySeeder extends Seeder
         ];
 
         //limited number of countries for testing purposes
-        if (config('app.env') === 'testing') {
+        if (App::runningUnitTests()) {
             $countries = array_filter($countries, function ($country) {
                 return in_array($country['iso'], ['GB', 'US', 'CA', 'IE']);
             });

@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
         $user->addRole('super-admin');
 
         $user = User::factory()->create([
+            'last_name' => 'Owner',
             'email' => 'owner@dreamsites.co.uk',
             'password' => 'password123',
         ]);
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
         $user->addRole('owner');
 
         $user = User::factory()->create([
+            'last_name' => 'Admin',
             'email' => 'admin@dreamsites.co.uk',
             'password' => 'password123',
         ]);
@@ -36,12 +38,14 @@ class UserSeeder extends Seeder
         $user->addRole('admin');
 
         $user = User::factory()->create([
+            'last_name' => 'Admin',
             'password' => 'password123',
         ]);
 
         $user->addRole('admin');
 
         $user = User::factory()->create([
+            'last_name' => 'Admin',
             'password' => 'password123',
         ]);
 

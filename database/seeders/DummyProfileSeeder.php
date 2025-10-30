@@ -11,6 +11,7 @@ use App\Models\ProfileChoice;
 use App\Models\ProfileQuestion;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -19,49 +20,115 @@ class DummyProfileSeeder extends Seeder
 {
     private array $femaleUsers = [];
     private array $maleUsers = [];
+    private array $locations = [
+        [
+            'city' => 'Stevenage',
+            'lat' => 51.90375843086422,
+            'lon' => -0.1875166495581234,
+        ],
+        [
+            'city' => 'Liverpool',
+            'lat' => 53.41054787496579,
+            'lon' => -2.999281043978018
+        ],
+        [
+            'city' => 'Leeds',
+            'lat' => 53.798793047080736,
+            'lon' => -1.5450124096928106
+        ],
+        [
+            'city' => 'Harrogate',
+            'lat' => 53.991869061684525,
+            'lon' => -1.5452251971829414
+        ],
+        [
+            'city' => 'London',
+            'lat' => 51.50980724121141,
+            'lon' => -0.1160613721182063
+        ],
+        [
+            'city' => 'Manchester',
+            'lat' => 53.48092943032973,
+            'lon' => -2.247667101685042
+        ],
+        [
+            'city' => 'Birmingham',
+            'lat' => 52.48476655948276,
+            'lon' => -1.875346594077659
+        ],
+        [
+            'city' => 'Wolverhampton',
+            'lat' => 52.586767167394,
+            'lon' => -2.135183763622839
+        ],
+        [
+            'city' => 'Leicester',
+            'lat' => 52.63700453437074,
+            'lon' => -1.1506803481117172
+        ],
+        [
+            'city' => 'Blackburn',
+            'lat' => 53.74767663718259,
+            'lon' => -2.4872079226580355
+        ],
+    ];
 
     /**
      * Insert 100 female and 100 male dummy profiles into the application.
      */
     public function run(): void
     {
-        //        $femaleNames = [
-        //            'Alice', 'Emma', 'Olivia', 'Sophia', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper', 'Evelyn',
-        //            'Ava', 'Abigail', 'Emily', 'Elizabeth', 'Sofia', 'Avery', 'Ella', 'Scarlett', 'Grace', 'Chloe',
-        //            'Victoria', 'Riley', 'Aria', 'Lily', 'Aubrey', 'Zoey', 'Penelope', 'Lillian', 'Addison', 'Layla',
-        //            'Natalie', 'Camila', 'Hannah', 'Brooklyn', 'Zoe', 'Nora', 'Leah', 'Savannah', 'Audrey', 'Claire',
-        //            'Eleanor', 'Skylar', 'Ellie', 'Samantha', 'Stella', 'Paisley', 'Violet', 'Mila', 'Allison', 'Alexa',
-        //            'Anna', 'Sarah', 'Madelyn', 'Ariana', 'Aaliyah', 'Gabriella', 'Hailey', 'Autumn', 'Kaylee', 'Ruby',
-        //            'Serenity', 'Eva', 'Naomi', 'Piper', 'Lydia', 'Melanie', 'Brianna', 'Maya', 'Taylor', 'Katherine',
-        //            'Madison', 'Morgan', 'Kimberly', 'Hazel', 'Jessica', 'Gianna', 'Rebecca', 'Andrea', 'Faith', 'Mary',
-        //            'Isabelle', 'Josephine', 'Delilah', 'Nevaeh', 'Brooke', 'Paige', 'Sadie', 'Quinn', 'Phoebe', 'Sophie',
-        //            'Caroline', 'Natalia', 'Kylie', 'Nicole', 'Trinity', 'Molly', 'Valeria', 'Daisy', 'Amy', 'Melody'
-        //        ];
-        //
-        //        $maleNames = [
-        //            'Liam', 'Noah', 'Oliver', 'Elijah', 'James', 'William', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
-        //            'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Aiden', 'Samuel', 'Sebastian',
-        //            'Matthew', 'David', 'Joseph', 'Carter', 'Owen', 'Wyatt', 'John', 'Jack', 'Luke', 'Jayden',
-        //            'Dylan', 'Grayson', 'Levi', 'Isaac', 'Gabriel', 'Julian', 'Mateo', 'Anthony', 'Jaxon', 'Lincoln',
-        //            'Joshua', 'Christopher', 'Andrew', 'Theodore', 'Caleb', 'Ryan', 'Asher', 'Nathan', 'Thomas', 'Leo',
-        //            'Isaiah', 'Charles', 'Josiah', 'Hudson', 'Christian', 'Hunter', 'Connor', 'Eli', 'Ezra', 'Aaron',
-        //            'Landon', 'Adrian', 'Jonathan', 'Nolan', 'Jeremiah', 'Easton', 'Elias', 'Colton', 'Cameron', 'Carson',
-        //            'Robert', 'Angel', 'Maverick', 'Nicholas', 'Dominic', 'Jace', 'Brayden', 'Austin', 'Ian', 'Adam',
-        //            'Evan', 'Jose', 'Ezekiel', 'Tyler', 'Miles', 'Zachary', 'Axel', 'Chase', 'Parker', 'Kayden',
-        //            'Blake', 'Jason', 'Jordan', 'Declan', 'Eric', 'Wesley', 'Silas', 'Timothy', 'Brody', 'Cooper'
-        //        ];
+//                $femaleNames = [
+//                    'Alice', 'Emma', 'Olivia', 'Sophia', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper', 'Evelyn',
+//                    'Ava', 'Abigail', 'Emily', 'Elizabeth', 'Sofia', 'Avery', 'Ella', 'Scarlett', 'Grace', 'Chloe',
+//                    'Victoria', 'Riley', 'Aria', 'Lily', 'Aubrey', 'Zoey', 'Penelope', 'Lillian', 'Addison', 'Layla',
+//                    'Natalie', 'Camila', 'Hannah', 'Brooklyn', 'Zoe', 'Nora', 'Leah', 'Savannah', 'Audrey', 'Claire',
+//                    'Eleanor', 'Skylar', 'Ellie', 'Samantha', 'Stella', 'Paisley', 'Violet', 'Mila', 'Allison', 'Alexa',
+//                    'Anna', 'Sarah', 'Madelyn', 'Ariana', 'Aaliyah', 'Gabriella', 'Hailey', 'Autumn', 'Kaylee', 'Ruby',
+//                    'Serenity', 'Eva', 'Naomi', 'Piper', 'Lydia', 'Melanie', 'Brianna', 'Maya', 'Taylor', 'Katherine',
+//                    'Madison', 'Morgan', 'Kimberly', 'Hazel', 'Jessica', 'Gianna', 'Rebecca', 'Andrea', 'Faith', 'Mary',
+//                    'Isabelle', 'Josephine', 'Delilah', 'Nevaeh', 'Brooke', 'Paige', 'Sadie', 'Quinn', 'Phoebe', 'Sophie',
+//                    'Caroline', 'Natalia', 'Kylie', 'Nicole', 'Trinity', 'Molly', 'Valeria', 'Daisy', 'Amy', 'Melody'
+//                ];
+//
+//                $maleNames = [
+//                    'Charlie', 'Noah', 'Oliver', 'Elijah', 'James', 'William', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
+//                    'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Aiden', 'Samuel', 'Sebastian',
+//                    'Matthew', 'David', 'Joseph', 'Carter', 'Owen', 'Wyatt', 'John', 'Jack', 'Luke', 'Jayden',
+//                    'Dylan', 'Grayson', 'Levi', 'Isaac', 'Gabriel', 'Julian', 'Mateo', 'Anthony', 'Jaxon', 'Lincoln',
+//                    'Joshua', 'Christopher', 'Andrew', 'Theodore', 'Caleb', 'Ryan', 'Asher', 'Nathan', 'Thomas', 'Leo',
+//                    'Isaiah', 'Charles', 'Josiah', 'Hudson', 'Christian', 'Hunter', 'Connor', 'Eli', 'Ezra', 'Aaron',
+//                    'Landon', 'Adrian', 'Jonathan', 'Nolan', 'Jeremiah', 'Easton', 'Elias', 'Colton', 'Cameron', 'Carson',
+//                    'Robert', 'Angel', 'Maverick', 'Nicholas', 'Dominic', 'Jace', 'Brayden', 'Austin', 'Ian', 'Adam',
+//                    'Evan', 'Jose', 'Ezekiel', 'Tyler', 'Miles', 'Zachary', 'Axel', 'Chase', 'Parker', 'Kayden',
+//                    'Blake', 'Jason', 'Jordan', 'Declan', 'Eric', 'Wesley', 'Silas', 'Timothy', 'Brody', 'Cooper'
+//                ];
 
-        $femaleNames = [
-            'Alice', 'Emma', 'Olivia', 'Sophia', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper', 'Evelyn',
-            'Ava', 'Abigail', 'Emily', 'Elizabeth', 'Sofia', 'Avery', 'Ella', 'Scarlett', 'Grace', 'Chloe',
-            'Victoria', 'Riley', 'Aria', 'Lily', 'Aubrey', 'Zoey', 'Penelope', 'Lillian', 'Addison', 'Layla',
-        ];
+        if (!App::runningUnitTests()) {
+            $femaleNames = [
+                'Alice', 'Emma', 'Olivia', 'Sophia', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper', 'Evelyn',
+                'Ava', 'Abigail', 'Emily', 'Elizabeth', 'Sofia', 'Avery', 'Ella', 'Scarlett', 'Grace', 'Chloe',
+                'Victoria', 'Riley', 'Aria', 'Lily', 'Aubrey', 'Zoey', 'Penelope', 'Lillian', 'Addison', 'Layla',
+                'Natalie', 'Camila', 'Hannah', 'Brooklyn', 'Zoe', 'Nora', 'Leah', 'Savannah', 'Audrey', 'Claire',
+                'Eleanor', 'Skylar', 'Ellie', 'Samantha', 'Stella', 'Paisley', 'Violet', 'Mila', 'Allison', 'Alexa',
+            ];
 
-        $maleNames = [
-            'Liam', 'Noah', 'Oliver', 'Elijah', 'James', 'William', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
-            'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Aiden', 'Samuel', 'Sebastian',
-            'Matthew', 'David', 'Joseph', 'Carter', 'Owen', 'Wyatt', 'John', 'Jack', 'Luke', 'Jayden',
-        ];
+            $maleNames = [
+                'Charlie', 'Noah', 'Oliver', 'Elijah', 'James', 'William', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
+                'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Aiden', 'Samuel', 'Sebastian',
+                'Matthew', 'David', 'Joseph', 'Carter', 'Owen', 'Wyatt', 'John', 'Jack', 'Luke', 'Jayden',
+                'Dylan', 'Grayson', 'Levi', 'Isaac', 'Gabriel', 'Julian', 'Mateo', 'Anthony', 'Jaxon', 'Lincoln',
+                'Joshua', 'Christopher', 'Andrew', 'Theodore', 'Caleb', 'Ryan', 'Asher', 'Nathan', 'Thomas', 'Leo',
+            ];
+        } else {
+            $femaleNames = [
+                'Alice', 'Emma',
+            ];
+
+            $maleNames = [
+                'Charlie', 'Noah',
+            ];
+        }
 
         $this->insertData($femaleNames, GenderEnum::FEMALE->value);
         $this->insertData($maleNames, GenderEnum::MALE->value);
@@ -147,36 +214,46 @@ class DummyProfileSeeder extends Seeder
                 ]);
                 $user->addRole(RoleEnum::CUSTOMER->value);
 
+                $location = $this->locations[array_rand($this->locations)];
+
                 Profile::factory()->create([
                     'user_id' => $user->id,
                     'sex' => $sex,
+                    'latitude' => $location['lat'],
+                    'longitude' => $location['lon'],
+                    'city' => $location['city'],
+                    'location' => $location['city'],
                 ]);
 
-                $image = Image::create([
-                    'user_id' => $user->id
-                ]);
+                if (!App::runningUnitTests()) {
+                    $image = Image::create([
+                        'user_id' => $user->id,
+                        'is_approved' => true,
+                    ]);
 
-                $image2 = Image::create([
-                    'user_id' => $user->id,
-                    'sort_order' => 1,
-                ]);
+                    $image2 = Image::create([
+                        'user_id' => $user->id,
+                        'sort_order' => 1,
+                        'is_approved' => true,
+                    ]);
 
-                $path = $sex === GenderEnum::FEMALE->value ? 'women_pics' : 'men_pics';
+                    $path = $sex === GenderEnum::FEMALE->value ? 'women_pics' : 'men_pics';
 
-                $pathToFile1 = public_path("sample_images/$path/$index.jpg");
+                    $pathToFile1 = public_path("sample_images/$path/$index.jpg");
 
-                $rand = random_int(0, 99);
-                $pathToFile2 = public_path("sample_images/$path/$rand.jpg");
+                    $rand = random_int(0, 99);
+                    $pathToFile2 = public_path("sample_images/$path/$rand.jpg");
 
-                $image
-                    ->addMedia($pathToFile1)
-                    ->preservingOriginal()
-                    ->toMediaCollection('profile_images');
+                    $image
+                        ->addMedia($pathToFile1)
+                        ->preservingOriginal()
+                        ->toMediaCollection('profile_images');
 
-                $image2
-                    ->addMedia($pathToFile2)
-                    ->preservingOriginal()
-                    ->toMediaCollection('profile_images');
+                    $image2
+                        ->addMedia($pathToFile2)
+                        ->preservingOriginal()
+                        ->toMediaCollection('profile_images');
+                }
 
                 DB::commit();
 
