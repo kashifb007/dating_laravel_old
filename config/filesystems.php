@@ -77,4 +77,7 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    'compression' => env('FILESYSTEM_COMPRESSION', 0.3),
+    'quality' => env('FILESYSTEM_QUALITY', 50),
+    'max_files' => env('FILESYSTEM_MAX_FILES', 10),
 ];
