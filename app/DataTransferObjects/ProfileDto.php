@@ -8,37 +8,39 @@
 
 namespace App\DataTransferObjects;
 
-class GuestDto
+class ProfileDto
 {
     public function __construct(
-        public string $ipAddress = '',
         public bool $sex = true,
-        public ?bool $interestedIn = null,
+        public ?bool $sexual_preference = null,
         public int $fromAge = 18,
         public int $toAge = 18,
         public string $city = '',
         public string $location = '',
         public int $country_id = 0,
-        public int $language_id = 0,
+        public int $user_id = 0,
         public float $lat = 0,
         public float $lon = 0,
+        public string $dob,
+        public int $age,
     ) {
     }
 
     public function toArray(): array
     {
         return [
-            'ip_address' => $this->ipAddress,
             'sex' => $this->sex,
-            'interestedIn' => $this->interestedIn,
+            'sexual_preference' => $this->sexual_preference,
             'min_age' => $this->fromAge,
             'max_age' => $this->toAge,
             'city' => $this->city,
             'location' => $this->location,
-            'language_id' => $this->language_id,
             'country_id' => $this->country_id,
+            'user_id' => $this->user_id,
             'latitude' => $this->lat,
             'longitude' => $this->lon,
+            'dob' => $this->dob,
+            'age' => $this->age,
         ];
     }
 }

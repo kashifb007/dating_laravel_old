@@ -11,9 +11,9 @@ class MediaService
     public function store(): void
     {
         $this->model
-            ->addMedia($this->model->realPath, config('filesystems.disks.local'))
+            ->addMedia($this->model->realPath, config('filesystems.default'))
             ->setName($this->model->fileName)
-            ->toMediaCollection($this->model->collectionName, config('filesystems.disks.local'));
+            ->toMediaCollection($this->model->collectionName, config('filesystems.default'));
     }
 
     public function update(): void

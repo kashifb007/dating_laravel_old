@@ -67,7 +67,7 @@ class MemberService
                     $inchesTotal = round($cm / 2.54);
                     $feet = intdiv($inchesTotal, 12);
                     $inches = $inchesTotal % 12;
-                    $val = "{$feet}\" {$inches}' - {$cm}cm";
+                    $val = "{$feet}' {$inches}\" - {$cm}cm";
                 }
 
                 $buttons[] = (object) [
@@ -93,15 +93,15 @@ class MemberService
     }
 
     /**
-     * Great-circle distance between two lat/lng points.
+     * Great-circle distance between two lat/lon points.
      *
      * @throws \InvalidArgumentException
      */
     public function getMileage(
         float $fromLat,
-        float $fromLng,
+        float $fromLog,
         float $toLat,
-        float $toLng,
+        float $toLon,
         bool $miles = true
     ): int {
         // Basic validation
@@ -110,14 +110,14 @@ class MemberService
                 throw new \InvalidArgumentException("{$k} must be between -90 and 90.");
             }
         }
-        foreach ([['lng',$fromLng], ['lng',$toLng]] as [$k, $v]) {
+        foreach ([['lon',$fromLog], ['lon',$toLon]] as [$k, $v]) {
             if ($v < -180 || $v > 180) {
                 throw new \InvalidArgumentException("{$k} must be between -180 and 180.");
             }
         }
 
         // Same point fast-path
-        if ($fromLat === $toLat && $fromLng === $toLng) {
+        if ($fromLat === $toLat && $fromLog === $toLon) {
             return 0;
         }
 
@@ -125,7 +125,7 @@ class MemberService
         $φ1 = deg2rad($fromLat);
         $φ2 = deg2rad($toLat);
         $Δφ = deg2rad($toLat - $fromLat);
-        $Δλ = deg2rad($toLng - $fromLng);
+        $Δλ = deg2rad($toLon - $fromLog);
 
         // Haversine
         $sinΔφ2 = sin($Δφ / 2.0);

@@ -132,7 +132,6 @@ new #[Layout('layouts.guest')] class extends Component {
         $result = new CitySearchAction()->handle(new NominatimDto(language: $locale, q: $q));
 
         $this->cityData = $result['data'] ?? [];
-        $result['powered_by'] = '';
 
         if (isset($result['data'])) {
             $this->poweredBy = $result['powered_by'];
@@ -232,7 +231,7 @@ new #[Layout('layouts.guest')] class extends Component {
                         class="cursor-default select-none opacity-70"
                     >
                         <span class="sr-only">{{ $this->citySearch }}</span>
-                        {{ $poweredBy }}
+                        {{ $this->poweredBy }}
                     </flux:select.option>
                 @endif
             </flux:select>

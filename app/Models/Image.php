@@ -58,4 +58,20 @@ class Image extends Model implements HasMedia
                     ->nonQueued();
             });
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Image $image) {
+            if (!is_null($image->sort_order)) {
+                return;
+            }
+
+            if (!$image->user_id) {
+                return;
+            }
+
+            $max = static::where('user_id', $image->user_id)->max('sort_order');
+            $image->sort_order = is_null($max) ? 0 : ($max + 1);
+        });
+    }
 }

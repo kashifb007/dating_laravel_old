@@ -14,7 +14,8 @@ use App\Http\Requests\Api\UserRequest;
 readonly class UserDto
 {
     public function __construct(
-        public string $name,
+        public string $first_name,
+        public string $last_name,
         public string $email,
         public string $password,
         public bool $newsletterEmail,
@@ -27,9 +28,10 @@ readonly class UserDto
     public static function fromApiRequest(UserRequest $request): self
     {
         return new self(
-            name: $request->validated('name'),
+            first_name: $request->validated('first_name'),
+            last_name: $request->validated('last_name'),
             email: $request->validated('email'),
-            password: bcrypt($request->validated('password')),
+            password: $request->validated('password'),
             newsletterEmail: $request->validated('newsletterEmail'),
             newsletterSms: $request->validated('newsletterSms'),
             newsletterPush: $request->validated('newsletterPush'),
@@ -40,12 +42,13 @@ readonly class UserDto
     public function toArray(): array
     {
         return [
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
             'newsletter_email' => $this->newsletterEmail,
             'newsletter_sms' => $this->newsletterSms,
             'newsletter_push' => $this->newsletterPush,
-            'password' => bcrypt($this->password),
+            'password' => $this->password,
             'role' => RoleEnum::tryFrom($this->role),
         ];
     }

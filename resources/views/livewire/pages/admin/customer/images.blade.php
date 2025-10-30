@@ -10,6 +10,15 @@
             </a>
             <div class="flex flex-col space-y-2">
                 <span class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $image['created_at'] }}</span>
+
+                {{-- Approve toggle (isApproved) --}}
+                <flux:switch
+                    size="sm"
+                    wire:model.live="isApproved.{{ $image['id'] }}"
+                    :label="$image['is_approved'] ? 'Approved' : 'Approve?'"
+                    class="my-4"
+                />
+
                 <x-filament::button
                     color="danger"
                     size="sm"
@@ -27,3 +36,4 @@
         <div class="text-sm text-gray-700 dark:text-gray-300">No images.</div>
     @endforelse
 </div>
+

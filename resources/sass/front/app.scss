@@ -1,1 +1,7 @@
 @import '../app';
+
+.data-checked\:bg-\(--color-accent\) {
+    &[data-checked] {
+        background-color: oklch(0.54 0 0);
+    }
+}

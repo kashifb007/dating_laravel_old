@@ -2,6 +2,7 @@
     'name',
     'show' => false,
     'showButtons' => true,
+    'showReset' => false,
     'showHeader' => true,
     'maxWidth' => '2xl',
     'title' => 'Modal Title',
@@ -68,7 +69,7 @@
 
     <div
         x-show="show"
-        class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidth }} sm:mx-auto z-50"
+        class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg overflow-hidden shadow-xl transform transition-all w-full {{ $maxWidth }} sm:mx-auto z-50"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
@@ -87,13 +88,20 @@
                 </button>
             </div>
         @endif
-        <div class="p-6">
+        <div class="p-6 w-full">
             {{ $slot }}
 
             @if ($showButtons)
-                <x-secondary-button class="ml-2" x-on:click="$dispatch('close-modal', '{{ $name }}')">
-                    {{ __('cancel') }}
-                </x-secondary-button>
+                <flux:button class="ml-2 hover:cursor-pointer" variant="primary" color="pink" x-on:click="$dispatch('close-modal', '{{ $name }}')" icon="x-mark">
+                    {{ __('Cancel') }}
+                </flux:button>
+            @endif
+            @if ($showReset)
+                </div>
+                    <flux:button class="ml-2 hover:cursor-pointer" wire:click="resetFilter" icon="arrow-uturn-left">
+                        {{ __('Reset') }}
+                    </flux:button>
+                </div>
             @endif
         </div>
     </div>

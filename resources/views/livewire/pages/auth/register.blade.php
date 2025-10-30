@@ -1,12 +1,18 @@
 <?php
 
+use App\Actions\Customer\RegisterAction;
+use App\DataTransferObjects\ProfileDto;
+use App\Enums\RoleEnum;
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Flux\Flux;
 
 new #[Layout('layouts.guest')] class extends Component {
     public string $first_name = '';
@@ -14,6 +20,14 @@ new #[Layout('layouts.guest')] class extends Component {
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public ?Carbon $dob = null;
+
+    public function mount()
+    {
+        if (!session('profile_data')) {
+            $this->redirect(route('home', absolute: false), navigate: true);
+        }
+    }
 
     /**
      * Handle an incoming registration request.
@@ -25,15 +39,25 @@ new #[Layout('layouts.guest')] class extends Component {
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'dob' => ['required', 'date', 'before:-18 years'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
-        event(new Registered($user = User::create($validated)));
+        $action = new RegisterAction();
+        $user = $action->handle($validated, $profileValidated = session('profile_data'));
 
-        Auth::login($user);
+        if (filled($user)) {
+            Flux::toast(text: 'Redirecting to dashboard...',
+                heading: 'Account created.',
+                variant: 'success');
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+            $this->redirect(route('dashboard', absolute: false), navigate: true);
+        } else {
+            Flux::toast(text: 'An error occurred while creating your account.',
+                heading: 'Registration failed.',
+                variant: 'danger');
+        }
     }
 }; ?>
 
@@ -60,6 +84,19 @@ new #[Layout('layouts.guest')] class extends Component {
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required
                           autocomplete="username"/>
             <x-input-error :messages="$errors->get('email')" class="mt-2"/>
+        </div>
+
+        <!-- Dob -->
+        <div class="mt-4">
+            <x-input-label for="dob" :value="__('Date of birth')"/>
+
+            <flux:date-picker wire:model="dob" selectable-header>
+                <x-slot name="trigger">
+                    <flux:date-picker.input/>
+                </x-slot>
+            </flux:date-picker>
+
+            <x-input-error :messages="$errors->get('dob')" class="mt-2"/>
         </div>
 
         <!-- Password -->

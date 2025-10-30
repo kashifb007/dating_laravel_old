@@ -18,7 +18,7 @@
     }">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Discover') }}
+            {{ __('ui.discover') }}
         </h2>
     </x-slot>
 
@@ -44,19 +44,14 @@
                 </section>
                 <div class="sm:w-1/2 px-12">
                     <h2 class="text-xl font-bold">
-                        @cookieguest
-                        {{ $member->first_name }}
-                        @endcookieguest
-                        @auth
-                            <a title="{{ __('View Profile') }}"
-                               href="{{ route('member-profile', ['member' => $member->id]) }}"
-                               wire:navigate>{{ $member->first_name }}</a>
-                        @endauth
+                        <a title="{{ __('View Profile') }}"
+                           href="{{ route('member.profile', ['member' => $member->id]) }}"
+                           wire:navigate>{{ $member->first_name }}</a>
                     </h2>
-                    <h3>Age {{ $member->profile->age }}, {{ $member->profile->city }}</h3>
+                    <h3>{{ __('ui.age') }} {{ $member->profile->age }}, {{ $member->profile->city }}</h3>
 
                     <div class="my-4 space-y-2">
-                            <flux:button icon="map-pin" title="{{ __('Distance') }}">{{ $distanceStr }}</flux:button>
+                            <flux:button icon="map-pin" title="{{ __('ui.distance') }}">{{ $distanceStr }}</flux:button>
                         @foreach($buttons as $button)
                             <flux:button icon="{{ $button->icon }}" title="{{ $button->question }}">{{ $button->answer }}</flux:button>
                         @endforeach
@@ -64,10 +59,10 @@
 
                     <div>
                         <flux:button icon="heart" variant="primary" color="green" wire:click="like"
-                                     class="cursor-pointer">Like
+                                     class="cursor-pointer">{{ __('ui.like') }}
                         </flux:button>
-                        <flux:button icon="x-mark" wire:click="decline" variant="primary" color="red"
-                                     class="cursor-pointer">Decline
+                        <flux:button icon="x-mark" variant="primary" color="red" wire:click="decline"
+                                     class="cursor-pointer">{{ __('ui.decline') }}
                         </flux:button>
                     </div>
                 </div>

@@ -1,8 +1,15 @@
 <?php
 
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Livewire\Pages\Auth\Discover;
+use App\Livewire\Pages\Auth\Search;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+
+Route::bind('member', function ($value) {
+    return User::query()->findOrFail($value);
+});
 
 Route::middleware('guest')->group(function () {
     Volt::route('forgot-password', 'pages.auth.forgot-password')
@@ -10,6 +17,16 @@ Route::middleware('guest')->group(function () {
 
     Volt::route('reset-password/{token}', 'pages.auth.reset-password')
         ->name('password.reset');
+
+    Volt::route('register', 'pages.auth.register')
+        ->middleware('guest')
+        ->name('register');
+
+    Volt::route('login', 'pages.auth.login')
+        ->name('login');
+
+    Volt::route('/', 'pages.auth.home')
+        ->name('home');
 });
 
 Route::middleware('auth')->group(function () {
@@ -24,30 +41,15 @@ Route::middleware('auth')->group(function () {
         ->name('password.confirm.volt');
 });
 
-Volt::route('login', 'pages.auth.login')
-    ->middleware(['guest'])
-    ->name('login');
-
-//full registration page
-Volt::route('register', 'pages.auth.register')
-    ->middleware('guest')
-    ->name('register');
-
-Volt::route('/', 'pages.auth.register-guest')
-    ->middleware('public_only')
-    ->name('home');
-
-Route::middleware('maybe_guest')->group(function () {
-    Route::get('discover', \App\Livewire\Pages\Auth\Discover::class)
+Route::middleware(['auth', 'customer'])->group(function () {
+    Route::get('discover', Discover::class)
         ->name('discover');
 
-    Route::get('search', \App\Livewire\Pages\Auth\Search::class)
+    Route::get('search', Search::class)
         ->name('search');
-});
 
-Route::middleware('customer')->group(function () {
     Volt::route('member-profile/{member}', 'pages.auth.member-profile')
         ->where('member', '[0-9]+')
-        ->name('member-profile')
+        ->name('member.profile')
         ->can('view', 'member');
 });

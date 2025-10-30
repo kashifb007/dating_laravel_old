@@ -15,9 +15,6 @@ class Customer
      */
     public function handle(Request $request, Closure $next, ?string $redirectTo = null): Response
     {
-        if (!$request->user()) {
-            return redirect()->to($redirectTo ?? '/login');
-        }
         if ($request->user() && auth()->user()->hasRole(['admin', 'owner', 'super-admin'])) {
             return redirect()->to($redirectTo ?? '/admin');
         }

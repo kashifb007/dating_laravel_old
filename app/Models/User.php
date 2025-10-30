@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -38,13 +39,12 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
     {
         return [
             'email_verified_at' => 'datetime',
-            'login_expires_at' => 'datetime',
+            'last_logged_in_at' => 'datetime',
             'password' => 'hashed',
             'dob' => 'date',
             'sex' => 'boolean',
             'is_active' => 'boolean',
             'is_verified' => 'boolean',
-            'is_logged_in' => 'boolean',
             'newsletter_email' => 'boolean',
             'newsletter_sms' => 'boolean',
             'newsletter_push' => 'boolean',
@@ -119,6 +119,42 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
         return $this->hasOne(Profile::class);
     }
 
+    /**
+     * Get the members that this user has liked.
+     */
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'likes', 'user_id', 'member_id')
+            ->withTimestamps()
+            ->withPivot('read_at');
+    }
+
+    /**
+     * Get the members who have liked this user.
+     */
+    public function likesMe(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'likes', 'member_id', 'user_id')
+            ->withTimestamps()
+            ->withPivot('read_at');
+    }
+
+    /**
+     * Check if this user has liked a specific member.
+     */
+    public function hasLiked(User $member): bool
+    {
+        return $this->likes()->where('member_id', $member->id)->exists();
+    }
+
+    /**
+     * Check if this user has been liked by a specific member.
+     */
+    public function isLikedBy(User $member): bool
+    {
+        return $this->likesMe()->where('user_id', $member->id)->exists();
+    }
+
     public function getIsDummyAttribute(): bool
     {
         return (bool)($this->profile?->is_dummy ?? false);
@@ -139,10 +175,10 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
         return (bool)($this->profile?->is_active ?? false);
     }
 
-    public function scopeNear(Builder $query, float $lat, float $lng, float $miles = 30, bool $isMiles = true): Builder
+    public function scopeNear(Builder $query, float $lat, float $lon, float $miles = 30, bool $isMiles = true): Builder
     {
         $dLat = $miles / 69;
-        $dLng = $miles / (69 * max(cos(deg2rad($lat)), 1e-6));
+        $dLon = $miles / (69 * max(cos(deg2rad($lat)), 1e-6));
 
         if (!$isMiles) {
             $miles *= 0.621371;
@@ -160,10 +196,11 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
             ->whereNotNull('profiles.latitude')
             ->whereNotNull('profiles.longitude')
             ->whereBetween('profiles.latitude', [$lat - $dLat, $lat + $dLat])
-            ->whereBetween('profiles.longitude', [$lng - $dLng, $lng + $dLng])
-            ->selectRaw("$haversine AS distance", [$lat, $lat, $lng])
+            ->whereBetween('profiles.longitude', [$lon - $dLon, $lon + $dLon])
+            ->selectRaw("$haversine AS distance", [$lat, $lat, $lon])
             ->having('distance', '<=', $miles)
+            ->orderBy('distance')
             ->orderBy('profiles.profile_score', 'desc')
-            ->orderBy('distance');
+            ;
     }
 }

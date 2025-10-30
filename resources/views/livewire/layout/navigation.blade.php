@@ -35,6 +35,12 @@ new class extends Component {
         app()->setLocale($locale);
         session(['locale' => $locale]);
 
+        if (auth()->check()) {
+            $user = auth()->user();
+            $user->locale = $locale;
+            $user->save();
+        }
+
         // Refresh the page to apply the new locale
         $this->js('window.location.reload()');
     }
@@ -64,7 +70,7 @@ new class extends Component {
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}" wire:navigate title="{{ __('Dashboard') }}">
+                    <a href="{{ route('home') }}" wire:navigate title="{{ __('ui.dashboard') }}">
                         <img src="{{ asset('images/logo-header.png') }}" alt="{{ __('Dating App Logo') }}" class="w-12">
                     </a>
                 </div>
@@ -73,10 +79,10 @@ new class extends Component {
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
                         <x-nav-link :href="route('discover')" :active="request()->routeIs('discover')" wire:navigate>
-                            {{ __('Discover') }}
+                            {{ __('ui.discover') }}
                         </x-nav-link>
                         <x-nav-link :href="route('search')" :active="request()->routeIs('search')" wire:navigate>
-                            {{ __('Search') }}
+                            {{ __('ui.search') }}
                         </x-nav-link>
                     @endauth
                     @guest
@@ -148,14 +154,18 @@ new class extends Component {
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile')" wire:navigate>
-                                {{ __('Profile') }}
+                            <x-dropdown-link :href="route('profile')">
+                                {{ __('ui.profile') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('account')" wire:navigate>
+                                {{ __('ui.account') }}
                             </x-dropdown-link>
 
                             <!-- Authentication -->
                             <button wire:click="logout" class="w-full text-start">
                                 <x-dropdown-link>
-                                    {{ __('Log Out') }}
+                                    {{ __('ui.logout') }}
                                 </x-dropdown-link>
                             </button>
                         </x-slot>

@@ -2,9 +2,10 @@
 
 namespace App\Livewire\Pages\Auth;
 
+use Illuminate\Support\Facades\Auth;
+use Flux\Flux;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
-use App\Models\Guest;
 use App\Models\User;
 use Livewire\WithPagination;
 
@@ -19,30 +20,28 @@ class Search extends Component
     public int $minAge;
     public int $maxAge;
     public float $lat;
-    public float $lng;
+    public float $lon;
     public bool $isMiles = true;
+    public bool $isOnline = false;
+    public bool $isVerified = false;
+    public int $distance = 30;
+    public string $distanceStr = 'miles';
 
     public function mount(): void
     {
         $this->resetPage();
         $this->isMiles = config('app.distance') === 'M';
+        $this->distanceStr = $this->isMiles ? 'miles' : 'km';
     }
 
     private function getPreferences(): void
     {
-        if (auth()->check()) {
-            $this->preference = Cache::remember('user.' . auth()->user()->id . '.sexual_preference', now()->addDay(), static fn() => auth()->user()->profile->sexual_preference);
-            $this->minAge = Cache::remember('user.' . auth()->user()->id . '.min_age', now()->addDay(), static fn() => auth()->user()->profile->min_age);
-            $this->maxAge = Cache::remember('user.' . auth()->user()->id . '.max_age', now()->addDay(), static fn() => auth()->user()->profile->max_age);
-            $this->lat = Cache::remember('user.' . auth()->user()->id . '.lat', now()->addDay(), static fn() => auth()->user()->profile->latitude);
-            $this->lng = Cache::remember('user.' . auth()->user()->id . '.lng', now()->addDay(), static fn() => auth()->user()->profile->longitude);
-        } else {
-            $this->preference = Cache::remember('guest.' . session('guest_id') . '.sexual_preference', now()->addDay(), static fn() => Guest::whereId(session('guest_id'))->first()->sexual_preference);
-            $this->minAge = Cache::remember('guest.' . session('guest_id') . '.min_age', now()->addDay(), static fn() => Guest::whereId(session('guest_id'))->first()->min_age);
-            $this->maxAge = Cache::remember('guest.' . session('guest_id') . '.max_age', now()->addDay(), static fn() => Guest::whereId(session('guest_id'))->first()->max_age);
-            $this->lat = Cache::remember('guest.' . session('guest_id') . '.lat', now()->addDay(), static fn() => Guest::whereId(session('guest_id'))->first()->latitude);
-            $this->lng = Cache::remember('guest.' . session('guest_id') . '.lng', now()->addDay(), static fn() => Guest::whereId(session('guest_id'))->first()->longitude);
-        }
+        $this->preference = Cache::remember('user.' . Auth::user()->id . '.sexual_preference', now()->addDay(), static fn() => Auth::user()->profile->sexual_preference);
+        $this->minAge = Cache::remember('user.' . Auth::user()->id . '.min_age', now()->addDay(), static fn() => Auth::user()->profile->min_age);
+        $this->maxAge = Cache::remember('user.' . Auth::user()->id . '.max_age', now()->addDay(), static fn() => Auth::user()->profile->max_age);
+        $this->lat = Cache::remember('user.' . Auth::user()->id . '.lat', now()->addDay(), static fn() => Auth::user()->profile->latitude);
+        $this->lon = Cache::remember('user.' . Auth::user()->id . '.lon', now()->addDay(), static fn() => Auth::user()->profile->longitude);
+        $this->distance = Cache::remember('user.' . Auth::user()->id . '.distance', now()->addDay(), static fn() => Auth::user()->profile->distance);
     }
 
     public function getMembersProperty()
@@ -50,53 +49,99 @@ class Search extends Component
         $this->getPreferences();
         $sex = $this->preference;
 
-        $query = User::query()
+        return User::query()
             ->with(['profile', 'images' => function($query) {
                 $query->where('is_approved', 1);
             }])
             ->whereHasRole('customer')
             ->whereHas('profile', function ($q) {
-                $q->whereIsActive(true)
-                    ->orWhere('is_dummy', true);
-                $q->where('age', '>=', $this->minAge)
+                $q->where(function($query) {
+                    $query->whereIsActive(true)
+                        ->orWhere('is_dummy', true);
+                })
+                    ->where('age', '>=', $this->minAge)
                     ->where('age', '<=', $this->maxAge);
             })
             ->whereHas('images', function($query) {
                 $query->where('is_approved', 1);
             })
-            ->near($this->lat, $this->lng, 30, $this->isMiles)
-            ->orderBy('profiles.profile_score', 'desc')
-            ->orderBy('users.id');
-
-        if ($sex !== null) {
-            $query->whereHas('profile', function ($q) use ($sex) {
-                $q->whereSex($sex);
-            });
-        }
-
-        return $query->paginate($this->perPage);
+            ->when(
+                $sex !== null,
+                fn($q) => $q->whereHas('profile', function ($q) use ($sex) {
+                    $q->whereSex($sex);
+                })
+            )
+            ->near($this->lat, $this->lon, $this->distance, $this->isMiles)
+            ->orderBy('users.id')
+            ->paginate($this->perPage);
     }
 
     public function loadMoreMembers(): void
     {
-        if (auth()->check()) {
-            $paginator = $this->members;
-            if (!$paginator->hasMorePages()) {
-                $this->hasMore = false;
-                return;
-            }
-
-            $this->perPage += 12;
+        $paginator = $this->members;
+        if (!$paginator->hasMorePages()) {
+            $this->hasMore = false;
+            return;
         }
+
+        $this->perPage += 12;
+    }
+
+    public function updateFilters()
+    {
+        Auth::user()->profile->min_age = $this->minAge;
+        Auth::user()->profile->max_age = $this->maxAge;
+        Auth::user()->profile->distance = $this->distance;
+        Auth::user()->profile->save();
+
+        // Update cache
+        Cache::put('user.' . Auth::user()->id . '.min_age', $this->minAge, now()->addDay());
+        Cache::put('user.' . Auth::user()->id . '.max_age', $this->maxAge, now()->addDay());
+        Cache::put('user.' . Auth::user()->id . '.distance', $this->distance, now()->addDay());
     }
 
     public function applyFilters(): void
     {
         $this->resetPage();
+        $this->updateFilters();
         $this->perPage = 12;
         $this->getMembersProperty();
-        // Close the modal after applying filters
+        $this->hasMore = true;
+
         $this->dispatch('close-modal', 'breeze-modal');
+    }
+
+    public function getLikesProperty()
+    {
+        return Auth::user()->likes()->pluck('member_id')->toArray();
+    }
+
+    public function addLike(int $memberId, string $memberName)
+    {
+        if (!in_array($memberId, $this->likes)) {
+            Auth::user()->likes()->attach($memberId);
+            Flux::toast(text: "You liked {$memberName}",
+                variant: 'success');
+
+            $this->dispatch('likes-updated', $this->likes);
+        }
+    }
+
+    public function removeLike(int $memberId, string $memberName)
+    {
+        if (in_array($memberId, $this->likes)) {
+            Auth::user()->likes()->detach($memberId);
+            Flux::toast(text: "You unliked {$memberName}",
+                variant: 'danger');
+
+            $this->dispatch('likes-updated', $this->likes);
+        }
+    }
+
+    public function resetFilter()
+    {
+        Flux::toast(text: "Reset",
+            variant: 'success');
     }
 
     public function render()

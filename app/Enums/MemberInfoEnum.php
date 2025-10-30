@@ -12,8 +12,8 @@ enum MemberInfoEnum: string
     case HEIGHT = 'numbered-list';
     case EDUCATION = 'academic-cap';
     case SMOKE = 'fire';
-    case HAS_KIDS = 'users';
-    case WANT_KIDS = 'user-plus';
+    case HAS_CHILDREN = 'users';
+    case WANT_CHILDREN = 'user-plus';
     case LOOKING_FOR = 'heart';
 
     public static function fromSlug(string $slug): ?self

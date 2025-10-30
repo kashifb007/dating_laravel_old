@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -33,5 +34,14 @@ class ProfileAnswer extends Model
             $model instanceof \App\Models\ProfileQuestion => $this->answer,
             default => null,
         };
+    }
+
+    protected function answer(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value === null
+                ? null
+                : strip_tags($value),
+        );
     }
 }
